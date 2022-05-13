@@ -1,0 +1,1 @@
+-copy the package.json dependencies and npm install --legacy-peer-deps
