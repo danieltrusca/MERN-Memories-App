@@ -7,11 +7,19 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 dotenv.config();
 
+// import routes
+const postRotes=require("./routes/posts");
+
 const app = express();
+
+
 
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
 app.use(cors());
+
+// routes
+app.use("/api/posts", postRotes);
 
 const PORT = process.env.PORT || 5000;
 
