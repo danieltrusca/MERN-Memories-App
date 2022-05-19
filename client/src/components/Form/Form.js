@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+import { useDispatch, useSelector } from "react-redux";
+import { createPost, updatePost } from "../../redux/actions/posts";
 import FileBase from "react-file-base64";
 import { TextField, Button, Typography, Paper } from "@material-ui/core";
 
 import useStyles from "./styles";
 
-const Form = () => {
+const Form = ({ currentId, setCurrentId }) => {
+  const dispatch = useDispatch();
   const [postData, setPostData] = useState({
     creator: "",
     title: "",
@@ -12,9 +16,17 @@ const Form = () => {
     tags: "",
     selectedFile: "",
   });
+  const post = useSelector((state) =>
+    currentId ? state.posts.find((p) => p._id === currentId) : null
+  );
   const classes = useStyles();
 
+  useEffect(() => {
+    if (post) setPostData(post);
+  }, [post]);
+
   const clear = () => {
+    setCurrentId(0);
     setPostData({
       creator: "",
       title: "",
@@ -26,6 +38,13 @@ const Form = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (currentId === 0) {
+      dispatch(createPost(postData));
+      clear();
+    } else {
+      dispatch(updatePost(currentId, postData));
+      clear();
+    }
   };
 
   return (
@@ -36,7 +55,9 @@ const Form = () => {
         className={classes.form}
         onSubmit={handleSubmit}
       >
-        <Typography variant="h6">Creating a Memory</Typography>
+        <Typography variant="h6">
+          {currentId ? `Editing "${post.title}"` : "Creating a Memory"}
+        </Typography>
         <TextField
           name="creator"
           variant="outlined"
@@ -61,7 +82,7 @@ const Form = () => {
           label="Message"
           fullWidth
           multiline
-          rows={4}
+          minRows={4}
           value={postData.message}
           onChange={(e) =>
             setPostData({ ...postData, message: e.target.value })
@@ -94,7 +115,7 @@ const Form = () => {
           type="submit"
           fullWidth
         >
-          Submit
+          {currentId ? "Update" : "Submit"}
         </Button>
         <Button
           variant="contained"
