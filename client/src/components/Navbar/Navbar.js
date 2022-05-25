@@ -1,14 +1,43 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, {useState, useEffect} from "react";
+import { LOGOUT } from "../../redux/actions/types";
+import { Link, useLocation, useHistory } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import { AppBar, Typography, Toolbar, Avatar, Button } from "@material-ui/core";
 import memories from "../../images/memories.png";
+// import jwt_decode from "jwt-decode";
 
 import useStyles from "./styles";
 
 const Navbar = () => {
   const classes = useStyles();
+  const dispatch=useDispatch();
+  const location=useLocation();
+  const history=useHistory();
+  const [user, setUser]=useState(JSON.parse(localStorage.getItem('profile')));
 
-  const user = null;
+  console.log('user: '+ user);
+
+  useEffect(() => {
+    const token = user?.token;
+
+    // if (token) {
+    //   const decodedToken = jwt_decode(token);
+
+    //   if (decodedToken.exp * 1000 < new Date().getTime()) logout();
+    // }
+
+    setUser(JSON.parse(localStorage.getItem('profile')));
+    console.log('user: '+ user);
+  }, [location]);
+
+  const logout = () => {
+    dispatch({ type: LOGOUT });
+
+    history.push('/');
+
+    setUser(null);
+  };
+
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
       <div className={classes.brandContainer}>
@@ -41,7 +70,7 @@ const Navbar = () => {
               variant="contained"
               className={classes.logout}
               color="secondary"
-              onClick={() => {}}
+              onClick={logout}
             >
               Logout
             </Button>
