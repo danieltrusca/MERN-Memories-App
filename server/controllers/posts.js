@@ -1,5 +1,5 @@
-const express=require("express");
-const mongoose=require("mongoose");
+const express = require("express");
+const mongoose = require("mongoose");
 
 const PostMessage = require("../models/postMessage");
 
@@ -14,14 +14,12 @@ exports.getPosts = async (req, res) => {
 };
 
 exports.createPost = async (req, res) => {
-  const { title, message, selectedFile, creator, tags } = req.body;
+  const post = req.body;
 
   const newPostMessage = new PostMessage({
-    title,
-    message,
-    selectedFile,
-    creator,
-    tags,
+    ...post,
+    creator: req.userId,
+    createdAt: new Date().toISOString()
   });
 
   try {
@@ -48,27 +46,42 @@ exports.updatePost = async (req, res) => {
   res.json(updatedPost);
 };
 
-exports.deletePost=async (req,res)=>{
-  const {id}=req.params;
+exports.deletePost = async (req, res) => {
+  const { id } = req.params;
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
   await PostMessage.findByIdAndRemove(id);
 
-  res.json({message: 'Post deleted successfully'});
-}
+  res.json({ message: "Post deleted successfully" });
+};
 
-exports.likePost=async (req, res)=>{
-  const {id}=req.params;
+exports.likePost = async (req, res) => {
+  const { id } = req.params;
+
+  if (!req.userId) {
+    return res.json({ message: "Unauthenticated" });
+  }
 
   if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(404).send(`No post with id: ${id}`);
 
-  const post=await PostMessage.findById(id);
-  const updatedPost=await PostMessage.findByIdAndUpdate(id, {
-    likeCount: post.likeCount+1
-  }, {new: true});
+  const post = await PostMessage.findById(id);
+
+  const index = post.likes.findIndex((id) => id ===String(req.userId));
+
+  if (index === -1) {
+    post.likes.push(req.userId);
+  } else {
+    post.likes = post.likes.filter((id) => id !== String(req.userId));
+  }
+
+  const updatedPost = await PostMessage.findByIdAndUpdate(
+    id,
+    post,
+    { new: true }
+  );
 
   res.json(updatedPost);
-}
+};

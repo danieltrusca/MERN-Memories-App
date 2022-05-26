@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from 'react-redux';
 import { useHistory } from "react-router-dom";
 import {AUTH} from "../../redux/actions/types";
+import {signin, signup} from "../../redux/actions/auth";
 // import { GoogleLogin } from "react-google-login";
 import { GoogleLogin } from "@react-oauth/google";
 // import { useGoogleLogin } from "@react-oauth/google";
@@ -40,28 +41,7 @@ const Auth = () => {
   const [showPassword, setShowPassword] = useState(false);
   const handleShowPassword = () => setShowPassword(!showPassword);
 
-  // "eyJhbGciOiJSUzI1NiIsImtpZCI6IjQ4NmYxNjQ4MjAwNWEyY2RhZjI2ZDkyMTQwMThkMDI5Y2E0NmZiNTYiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmdvb2dsZS5jb20iLCJuYmYiOjE2NTMzMDY4NTAsImF1ZCI6IjkzNTEzMjc5ODI2Ny11OHBtNmJlcTV2ZWM5dWZ2cTd1ODdsMWlwZmZidW9jbS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsInN1YiI6IjExNDM4NDQzNTM1MTAyMTU3MTI4MiIsImVtYWlsIjoiZGFuaS50cnVzY2FAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImF6cCI6IjkzNTEzMjc5ODI2Ny11OHBtNmJlcTV2ZWM5dWZ2cTd1ODdsMWlwZmZidW9jbS5hcHBzLmdvb2dsZXVzZXJjb250ZW50LmNvbSIsIm5hbWUiOiJ0cnVzY2EgZGFuIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FBVFhBSnczSU1KdnN5TWVIT01YME9QSmVoMTlkREhiMksxTFl5SUNTdEc4PXM5Ni1jIiwiZ2l2ZW5fbmFtZSI6InRydXNjYSIsImZhbWlseV9uYW1lIjoiZGFuIiwiaWF0IjoxNjUzMzA3MTUwLCJleHAiOjE2NTMzMTA3NTAsImp0aSI6ImI2ZjM2YWNmNTgwYTMyMDQ1Nzg2OGI2NzY4YzJjMjYxMTA3NGJiMzcifQ.C12FAtHEKkY8CbJr35cvJphG-GadqPtDo-y2LecWNYgGF-0oDmrjzoev8-7aLI4vnCgYYFvMTC0ZtKjWXEvEfyKGAa5tWWghIIA7L1Aj3lwa4wBm5rlFGscaxw7u9ipdtBDa2mZctt0utHuvVCKsNNR63fmlWuCwBs0oUXU2JP-iICfvOxbD8XK-ilADn6IPQFmmWQWI4tDsAYy6fc-suydhRWew61P0xzWaXTHtFr6pZAnBr7w2tOqaSVBuYnua1iz7Y7y-8HoOlaH-W6P29n81VHW6RJeFu60nijYy3GOw31wNXBTjp-6w5ERLebd7zZK8fJJcU6qD6kk48XkY9g"
-
-  // const login = useGoogleLogin({
-  //   onSuccess: (credentialResponse) => console.log(credentialResponse),
-  // });
-
-  // const login = useGoogleLogin({
-  //   onSuccess:  (res) => {
-  //     console.log("auth.js-googlesuccess-res", res);
-  //     var decoded = jwt_decode(res.access_token);
-  //     // await fetch(
-  //     //   `https://oauth2.googleapis.com/tokeninfo?id_token=${res.access_token}`
-  //     // )
-  //     //   .then((res) => res.json())
-  //     //   .then((response) => {
-  //     //     console.log("user Info=", response);
-  //     //   })
-  //     //   .catch((error) => console.log(error));
-  //     // const responsePayload = decodeJwtResponse(res.access_token);
-  //     console.log(decoded);
-  //   },
-  // });
+  
 
   const googleSuccess = async (res) => {
     
@@ -81,6 +61,8 @@ const Auth = () => {
       console.log(error);
     }
   };
+
+
   const googleError = (error) => {
     console.log("google signin failed-error", error);
   };
@@ -96,6 +78,12 @@ const Auth = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    if(isSignup) {
+      dispatch(signup(form, history));
+    } else {
+      dispatch(signin(form, history));
+    }
   };
 
   return (

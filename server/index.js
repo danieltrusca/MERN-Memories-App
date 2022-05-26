@@ -9,6 +9,7 @@ dotenv.config();
 
 // import routes
 const postRotes=require("./routes/posts");
+const userRoutes=require("./routes/user");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.use(cors());
 
 // routes
 app.use("/api/posts", postRotes);
+app.use("/api/auth", userRoutes);
 
 const PORT = process.env.PORT || 5000;
 
