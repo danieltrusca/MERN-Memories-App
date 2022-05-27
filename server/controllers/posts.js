@@ -4,10 +4,50 @@ const mongoose = require("mongoose");
 const PostMessage = require("../models/postMessage");
 
 exports.getPosts = async (req, res) => {
+  const { page } = req.query;
   try {
-    const posts = await PostMessage.find();
+    const LIMIT = 8;
+    const startIndex = (Number(page) - 1) * LIMIT;
+    const total=await PostMessage.countDocuments({});
 
-    res.status(200).json(posts);
+    const posts = await PostMessage.find().sort({_id: -1}).limit(LIMIT).skip(startIndex);
+
+    res.status(200).json({
+      data: posts,
+      currentPage: Number(page),
+      numberOfPages: Math.ceil(total/LIMIT)
+    });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+// Query -> /posts?page=1 ->page=1 (req.query)
+// Params -> /posts/:2 ->id=2 (req.params)
+
+exports.getPostsBySearch = async (req, res) => {
+  const { searchQuery, tags } = req.query;
+
+  try {
+    const title = new RegExp(searchQuery, "i");
+
+    const posts = await PostMessage.find({
+      $or: [{ title }, { tags: { $in: tags.split(",") } }],
+    });
+
+    res.json({ data: posts });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+exports.getPost = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const post = await PostMessage.findById(id);
+
+    res.status(200).json(post);
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
@@ -19,7 +59,7 @@ exports.createPost = async (req, res) => {
   const newPostMessage = new PostMessage({
     ...post,
     creator: req.userId,
-    createdAt: new Date().toISOString()
+    createdAt: new Date().toISOString(),
   });
 
   try {
@@ -69,7 +109,7 @@ exports.likePost = async (req, res) => {
 
   const post = await PostMessage.findById(id);
 
-  const index = post.likes.findIndex((id) => id ===String(req.userId));
+  const index = post.likes.findIndex((id) => id === String(req.userId));
 
   if (index === -1) {
     post.likes.push(req.userId);
@@ -77,11 +117,9 @@ exports.likePost = async (req, res) => {
     post.likes = post.likes.filter((id) => id !== String(req.userId));
   }
 
-  const updatedPost = await PostMessage.findByIdAndUpdate(
-    id,
-    post,
-    { new: true }
-  );
+  const updatedPost = await PostMessage.findByIdAndUpdate(id, post, {
+    new: true,
+  });
 
   res.json(updatedPost);
 };

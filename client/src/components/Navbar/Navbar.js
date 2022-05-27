@@ -1,21 +1,24 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { LOGOUT } from "../../redux/actions/types";
 import { Link, useLocation, useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { AppBar, Typography, Toolbar, Avatar, Button } from "@material-ui/core";
-import memories from "../../images/memories.png";
+// import memories from "../../images/memories.png";
+
+import memoriesLogo from "../../images/memories-Logo.png";
+import memoriesText from "../../images/memories-Text.png";
 import jwt_decode from "jwt-decode";
 
 import useStyles from "./styles";
 
 const Navbar = () => {
   const classes = useStyles();
-  const dispatch=useDispatch();
-  const location=useLocation();
-  const history=useHistory();
-  const [user, setUser]=useState(JSON.parse(localStorage.getItem('profile')));
+  const dispatch = useDispatch();
+  const location = useLocation();
+  const history = useHistory();
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
 
-  console.log('user: '+ user);
+  // console.log("user: " + user);
 
   useEffect(() => {
     const token = user?.token;
@@ -26,32 +29,35 @@ const Navbar = () => {
       if (decodedToken.exp * 1000 < new Date().getTime()) logout();
     }
 
-    setUser(JSON.parse(localStorage.getItem('profile')));
-    console.log('user: '+ user);
+    setUser(JSON.parse(localStorage.getItem("profile")));
+    // console.log("user: " + user);
   }, [location]);
 
   const logout = () => {
     dispatch({ type: LOGOUT });
 
-    history.push('/');
+    history.push("/");
 
     setUser(null);
   };
 
   return (
     <AppBar className={classes.appBar} position="static" color="inherit">
-      <div className={classes.brandContainer}>
-        <Typography
+      <Link to="/" className={classes.brandContainer}>
+        <img
           component={Link}
           to="/"
-          className={classes.heading}
-          variant="h2"
-          align="center"
-        >
-          Memories
-        </Typography>
-        <img className={classes.image} src={memories} alt="icon" height="60" />
-      </div>
+          src={memoriesText}
+          alt="icon"
+          height="45px"
+        />
+        <img
+          className={classes.image}
+          src={memoriesLogo}
+          alt="icon"
+          height="40px"
+        />
+      </Link>
 
       <Toolbar className={classes.toolbar}>
         {user ? (
