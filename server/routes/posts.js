@@ -6,6 +6,7 @@ const {
   getPost,
   getPosts,
   getPostsBySearch,
+  getPostsByCreator,
   createPost,
   updatePost,
   deletePost,
@@ -17,6 +18,7 @@ const { auth } = require("../middleware/auth");
 router.get("/", getPosts);
 router.get("/post/:id", getPost);
 router.get("/search", getPostsBySearch);
+router.get("/creator", getPostsByCreator);
 // router.get("/test", (req, res)=>{
 //     console.log('test');
 // });

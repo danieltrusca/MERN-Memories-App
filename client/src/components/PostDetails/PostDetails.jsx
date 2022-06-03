@@ -11,7 +11,7 @@ import CommentSection from "./CommentSection";
 
 import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
-import { useParams, useHistory } from "react-router-dom";
+import { useParams, useHistory, Link } from "react-router-dom";
 
 import { getPost, getPostsBySearch } from "../../redux/actions/posts";
 
@@ -63,12 +63,28 @@ const PostDetails = () => {
             color="textSecondary"
             component="h2"
           >
-            {post.tags.map((tag) => `#${tag} `)}
+            {post.tags.map((tag, key) => (
+              <Link
+                to={`/tags/${tag}`}
+                key={key}
+                style={{ textDecoration: "none", color: "#3f51b5" }}
+              >
+                {` #${tag} `}
+              </Link>
+            ))}
           </Typography>
           <Typography gutterBottom variant="body1" component="p">
             {post.message}
           </Typography>
-          <Typography variant="h6">Created by: {post.name}</Typography>
+          <Typography variant="h6">
+            Created by:
+            <Link
+              to={`/creators/${post.name}`}
+              style={{ textDecoration: "none", color: "#3f51b5" }}
+            >
+              {` ${post.name}`}
+            </Link>
+          </Typography>
           <Typography variant="body1">
             {moment(post.createdAt).fromNow()}
           </Typography>

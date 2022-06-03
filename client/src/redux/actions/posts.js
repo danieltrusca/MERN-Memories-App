@@ -4,6 +4,7 @@ import {
   FETCH_ALL_POSTS,
   FETCH_POST,
   FETCH_POSTS_BY_SEARCH,
+  FETCH_BY_CREATOR,
   CREATE_POST,
   UPDATE_POST,
   DELETE_POST,
@@ -63,6 +64,18 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
       type: FETCH_POSTS_BY_SEARCH,
       payload: { data },
     });
+    dispatch({ type: END_LOADING });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const getPostsByCreator = (name) => async (dispatch) => {
+  try {
+    dispatch({ type: START_LOADING });
+    const { data: { data } } = await api.fetchPostsByCreator(name);
+
+    dispatch({ type: FETCH_BY_CREATOR, payload: { data } });
     dispatch({ type: END_LOADING });
   } catch (error) {
     console.log(error);

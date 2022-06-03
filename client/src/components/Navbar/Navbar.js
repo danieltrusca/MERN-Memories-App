@@ -1,44 +1,46 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { LOGOUT } from "../../redux/actions/types";
-import { Link, useLocation, useHistory } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { Link, useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { AppBar, Typography, Toolbar, Avatar, Button } from "@material-ui/core";
 // import memories from "../../images/memories.png";
 
 import memoriesLogo from "../../images/memories-Logo.png";
 import memoriesText from "../../images/memories-Text.png";
-import jwt_decode from "jwt-decode";
+// import jwt_decode from "jwt-decode";
 
 import useStyles from "./styles";
 
 const Navbar = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const location = useLocation();
+  
+  // const location = useLocation();
   const history = useHistory();
-  const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+  // const [user, setUser] = useState(JSON.parse(localStorage.getItem("profile")));
+  const user  = useSelector((state) => state.auth.authData);
 
   // console.log("user: " + user);
 
-  useEffect(() => {
-    const token = user?.token;
+  // useEffect(() => {
+  //   const token = user?.token;
 
-    if (token) {
-      const decodedToken = jwt_decode(token);
+  //   if (token) {
+  //     const decodedToken = jwt_decode(token);
 
-      if (decodedToken.exp * 1000 < new Date().getTime()) logout();
-    }
+  //     if (decodedToken.exp * 1000 < new Date().getTime()) logout();
+  //   }
 
-    setUser(JSON.parse(localStorage.getItem("profile")));
-    // console.log("user: " + user);
-  }, [location]);
+  //   // setUser(JSON.parse(localStorage.getItem("profile")));
+  //   // console.log("user: " + user);
+  // }, [location, logout]);
 
   const logout = () => {
     dispatch({ type: LOGOUT });
 
     history.push("/");
 
-    setUser(null);
+    // setUser(null);
   };
 
   return (

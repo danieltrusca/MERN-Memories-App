@@ -2,7 +2,7 @@ import { createStore, compose, applyMiddleware } from "redux";
 import reducers from "./reducers";
 import thunk from "redux-thunk";
 
-const initialState = {};
+const initialState = { auth: { authData: JSON.parse(localStorage.getItem("profile"))} };
 
 const middleWare = [thunk];
 
