@@ -13,7 +13,7 @@ import { useHistory, useLocation } from "react-router-dom";
 import ChipInput from "material-ui-chip-input";
 
 import { useDispatch } from "react-redux";
-import {  getPostsBySearch } from "../../redux/actions/posts";
+import { getPostsBySearch } from "../../redux/actions/posts";
 
 import Posts from "../Posts/Posts";
 import Form from "../Form/Form";
@@ -38,13 +38,15 @@ const Home = () => {
 
   const classes = useStyles();
 
+  // console.log('page:'+page);
+
   // useEffect(() => {
   //   dispatch(getPosts());
   // }, [currentId, dispatch]);
 
-  const searchPost = () => {
+  const searchPost = async () => {
     if (search.trim() || tags) {
-      dispatch(getPostsBySearch({ search, tags: tags.join(",") }));
+      await dispatch(getPostsBySearch({ search, tags: tags.join(",") }));
       history.push(
         `/posts/search?searchQuery=${search || "none"}&tags=${tags.join(",")}`
       );
@@ -52,6 +54,10 @@ const Home = () => {
       history.push("/");
     }
   };
+
+  // const searchPost= ()=>{
+  //   dispatch(searchPosts());
+  // }
 
   const handleKeyPress = (e) => {
     if (e.keyCode === 13) {

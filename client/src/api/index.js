@@ -16,19 +16,19 @@ API.interceptors.request.use((req) => {
 // const url_auth = 'http://localhost:5000/api/auth';
 
 export const fetchPosts = (page) => API.get(`/posts?page=${page}`);
-export const fetchPost = (id) => API.get(`/posts/${id}`);
-export const fetchPostsBySearch = (searchQuery) =>
-  API.get(
-    `/posts/search?searchQuery=${searchQuery.search || "none"}&tags=${
-      searchQuery.tags
-    }`
-  );
+export const fetchPost = (id) => API.get(`/posts/post/${id}`);
+export const fetchPostsBySearch = ({ search, tags }) =>
+  API.get(`/posts/search?searchQuery=${search || "none"}&tags=${tags}`);
+
+
+
 export const createPost = (newPost) => API.post("/posts", newPost);
 export const updatePost = (id, updatedPost) =>
   API.patch(`posts/${id}`, updatedPost);
 export const deletePost = (id) => API.delete(`posts/${id}`);
 
 export const likePost = (id) => API.patch(`posts/${id}/likePost`);
+export const comment = (value, id) => API.post(`posts/${id}/commentPost`, {value});
 
 export const signin = (formData) => API.post("/auth/signin", formData);
 export const signup = (formData) => API.post("/auth/signup", formData);

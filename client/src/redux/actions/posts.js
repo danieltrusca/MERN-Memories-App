@@ -8,6 +8,7 @@ import {
   UPDATE_POST,
   DELETE_POST,
   LIKE_POST,
+  COMMENT_POST,
   START_LOADING,
   END_LOADING,
 } from "./types";
@@ -21,7 +22,7 @@ export const getPost = (id) => async (dispatch) => {
 
     dispatch({
       type: FETCH_POST,
-      payload: data,
+      payload: { post: data },
     });
     dispatch({ type: END_LOADING });
   } catch (error) {
@@ -33,13 +34,15 @@ export const getPosts = (page) => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
 
-    const { data } = await api.fetchPosts(page);
+    const {
+      data: { data, currentPage, numberOfPages },
+    } = await api.fetchPosts(page);
 
     // console.log(data);
 
     dispatch({
       type: FETCH_ALL_POSTS,
-      payload: data,
+      payload: { data, currentPage, numberOfPages },
     });
     dispatch({ type: END_LOADING });
   } catch (error) {
@@ -50,12 +53,15 @@ export const getPosts = (page) => async (dispatch) => {
 export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
+
     const {
       data: { data },
     } = await api.fetchPostsBySearch(searchQuery);
+
+    // console.log(data);
     dispatch({
       type: FETCH_POSTS_BY_SEARCH,
-      payload: data,
+      payload: { data },
     });
     dispatch({ type: END_LOADING });
   } catch (error) {
@@ -63,7 +69,7 @@ export const getPostsBySearch = (searchQuery) => async (dispatch) => {
   }
 };
 
-export const createPost = (newPost) => async (dispatch) => {
+export const createPost = (newPost, history) => async (dispatch) => {
   try {
     dispatch({ type: START_LOADING });
     const { data } = await api.createPost(newPost);
@@ -72,6 +78,7 @@ export const createPost = (newPost) => async (dispatch) => {
       type: CREATE_POST,
       payload: data,
     });
+    history.push(`/posts/${data._id}`);
   } catch (error) {
     console.log(error.message);
   }
@@ -110,6 +117,19 @@ export const likePost = (id) => async (dispatch) => {
       type: LIKE_POST,
       payload: data,
     });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+export const commentPost = (value, id) => async (dispatch) => {
+  try {
+    const { data } = await api.comment(value, id);
+    dispatch({
+      type: COMMENT_POST,
+      payload: data
+    });
+    return data.comments;
   } catch (error) {
     console.log(error.message);
   }
